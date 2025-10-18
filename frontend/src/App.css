@@ -1,0 +1,6 @@
+/* src/App.css */
+body {
+  background: linear-gradient(45deg, #1a237e 30%, #283593 90%); /* A deep blue gradient */
+  background-attachment: fixed; /* Makes the gradient stay in place while scrolling */
+  color: white; /* Ensures default text is readable if something outside MUI is used */
+}
