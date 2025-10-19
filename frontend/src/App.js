@@ -1,9 +1,11 @@
-// src/App.js
+// frontend/src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
+import StudentDashboard from './pages/StudentDashboard';
+import CompanyDashboard from './pages/CompanyDashboard';
 import VerifyPage from './pages/VerifyPage';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -19,7 +21,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Protected Dashboard Route */}
+        {/* University Dashboard - Protected */}
         <Route
           path="/dashboard"
           element={
@@ -28,9 +30,28 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Student Dashboard - Protected */}
+        <Route
+          path="/student-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['Student']}>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Company Dashboard - Protected */}
+        <Route
+          path="/company-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['Company']}>
+              <CompanyDashboard />
+            </ProtectedRoute>
+          }
+        />
         
-        {/* --- CHANGE THIS LINE --- */}
-        {/* Default route now points to login */}
+        {/* Default route */}
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
