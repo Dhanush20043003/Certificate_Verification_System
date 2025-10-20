@@ -8,8 +8,7 @@ import {
   InputAdornment, IconButton, Alert, Paper, Fade
 } from '@mui/material';
 import {
-  Visibility, VisibilityOff, Email, Lock,
-  School, Business, Person
+  Visibility, VisibilityOff, Email, Lock, School
 } from '@mui/icons-material';
 
 const LoginPage = () => {
@@ -34,30 +33,30 @@ const LoginPage = () => {
 
     try {
       const res = await axios.post('/api/users/login', { email, password });
-      login(res.data);
+      console.log('Login response:', res.data); // Debug log
+      
+      login(res.data); // Save to context and localStorage
       
       // Redirect based on role
-      switch (res.data.role) {
-        case 'University':
-          navigate('/dashboard');
-          break;
-        case 'Student':
-          navigate('/student-dashboard');
-          break;
-        case 'Company':
-          navigate('/company-dashboard');
-          break;
-        default:
-          navigate('/');
+      if (res.data.role === 'University') {
+        console.log('Redirecting to admin dashboard');
+        navigate('/admin-dashboard');
+      } else if (res.data.role === 'Company') {
+        console.log('Redirecting to company dashboard');
+        navigate('/company-dashboard');
+      } else {
+        console.log('Redirecting to student register');
+        navigate('/student-register');
       }
     } catch (err) {
       let errorMessage = 'An unexpected error occurred.';
       if (err.response) {
         errorMessage = err.response.data.message || 'Invalid credentials.';
       } else if (err.request) {
-        errorMessage = 'Cannot connect to server. Please try again.';
+        errorMessage = 'Cannot connect to server. Please ensure backend is running.';
       }
       setError(errorMessage);
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -72,16 +71,6 @@ const LoginPage = () => {
         background: 'linear-gradient(135deg, #0a0e27 0%, #1a237e 50%, #283593 100%)',
         position: 'relative',
         overflow: 'hidden',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 20% 50%, rgba(63, 81, 181, 0.2) 0%, transparent 50%)',
-          pointerEvents: 'none',
-        },
       }}
     >
       <Container component="main" maxWidth="sm">
@@ -90,15 +79,10 @@ const LoginPage = () => {
             elevation={24}
             sx={{
               padding: { xs: 3, sm: 5 },
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(20px)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: 4,
-              position: 'relative',
-              zIndex: 1,
             }}
           >
             <Box
@@ -110,22 +94,22 @@ const LoginPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: 2,
+                margin: '0 auto 16px',
                 boxShadow: '0 8px 24px rgba(63, 81, 181, 0.4)',
               }}
             >
               <School sx={{ fontSize: 40, color: 'white' }} />
             </Box>
 
-            <Typography component="h1" variant="h4" fontWeight="bold" gutterBottom>
+            <Typography component="h1" variant="h4" fontWeight="bold" gutterBottom align="center">
               Welcome Back
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }} align="center">
               Sign in to access your account
             </Typography>
 
             {error && (
-              <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+              <Alert severity="error" sx={{ mb: 2 }}>
                 {error}
               </Alert>
             )}
@@ -210,27 +194,6 @@ const LoginPage = () => {
                 >
                   Don't have an account? Register here
                 </Link>
-              </Box>
-            </Box>
-
-            {/* Role Info Section */}
-            <Box sx={{ mt: 4, width: '100%' }}>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                Access Levels:
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <School fontSize="small" color="primary" />
-                  <Typography variant="caption">University</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Person fontSize="small" color="primary" />
-                  <Typography variant="caption">Student</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Business fontSize="small" color="primary" />
-                  <Typography variant="caption">Company</Typography>
-                </Box>
               </Box>
             </Box>
           </Paper>

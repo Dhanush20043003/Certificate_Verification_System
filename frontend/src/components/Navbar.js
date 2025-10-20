@@ -1,12 +1,11 @@
-// frontend/src/components/Navbar.js
+// frontend/src/components/Navbar.js - COMPLETE FIXED VERSION
 import React, { useContext } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, Box, IconButton,
   Menu, MenuItem, Avatar, Divider, ListItemIcon
 } from '@mui/material';
 import {
-  School, Verified, Dashboard, Logout, Person,
-  Business, Menu as MenuIcon
+  School, Verified, Dashboard, Logout, HowToReg, Download
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
@@ -30,41 +29,21 @@ const Navbar = () => {
     navigate('/login');
   };
 
-  const getDashboardRoute = () => {
-    if (!user) return '/';
-    switch (user.role) {
-      case 'University':
-        return '/dashboard';
-      case 'Student':
-        return '/student-dashboard';
-      case 'Company':
-        return '/company-dashboard';
-      default:
-        return '/';
-    }
-  };
-
-  const getRoleIcon = () => {
-    if (!user) return <Person />;
-    switch (user.role) {
-      case 'University':
-        return <School />;
-      case 'Student':
-        return <Person />;
-      case 'Company':
-        return <Business />;
-      default:
-        return <Person />;
+  const handleDashboardClick = () => {
+    if (user) {
+      if (user.role === 'University') {
+        navigate('/admin-dashboard');
+      } else if (user.role === 'Company') {
+        navigate('/company-dashboard');
+      }
     }
   };
 
   const getRoleColor = () => {
-    if (!user) return 'default';
+    if (!user) return '#757575';
     switch (user.role) {
       case 'University':
         return '#3f51b5';
-      case 'Student':
-        return '#4caf50';
       case 'Company':
         return '#ff4081';
       default:
@@ -77,7 +56,7 @@ const Navbar = () => {
       position="sticky" 
       elevation={0}
       sx={{
-        backgroundColor: 'rgba(10, 14, 39, 0.95)',
+        backgroundColor: 'rgba(139, 0, 0, 0.95)',
         backdropFilter: 'blur(20px)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
       }}
@@ -93,10 +72,6 @@ const Navbar = () => {
             gap: 1.5,
             textDecoration: 'none',
             color: 'inherit',
-            transition: 'transform 0.2s',
-            '&:hover': {
-              transform: 'scale(1.05)',
-            },
           }}
         >
           <Box
@@ -104,47 +79,69 @@ const Navbar = () => {
               width: 40,
               height: 40,
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%)',
+              background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <School sx={{ color: 'white' }} />
+            <School sx={{ color: '#8B0000' }} />
           </Box>
           <Box>
             <Typography 
               variant="h6" 
               fontWeight="bold"
-              sx={{ 
-                lineHeight: 1.2,
-                display: { xs: 'none', sm: 'block' }
-              }}
+              sx={{ lineHeight: 1.2 }}
             >
               CertiChain
             </Typography>
             <Typography 
               variant="caption" 
-              color="text.secondary"
-              sx={{ display: { xs: 'none', md: 'block' } }}
+              sx={{ display: { xs: 'none', sm: 'block' } }}
             >
-              Blockchain Certificate Verification
+              Certificate Verification
             </Typography>
           </Box>
         </Box>
 
-        {/* Navigation */}
+        {/* Navigation Links */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {/* Verify Button - Always Visible */}
+          {/* Register Certificate */}
+          <Button
+            component={RouterLink}
+            to="/student-register"
+            startIcon={<HowToReg />}
+            sx={{
+              color: 'white',
+              '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
+              display: { xs: 'none', sm: 'flex' }
+            }}
+          >
+            Register
+          </Button>
+
+          {/* Download */}
+          <Button
+            component={RouterLink}
+            to="/download-certificate"
+            startIcon={<Download />}
+            sx={{
+              color: 'white',
+              '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
+              display: { xs: 'none', sm: 'flex' }
+            }}
+          >
+            Download
+          </Button>
+
+          {/* Verify */}
           <Button
             component={RouterLink}
             to="/verify"
             startIcon={<Verified />}
             sx={{
               color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              },
+              '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
             }}
           >
             Verify
@@ -152,21 +149,20 @@ const Navbar = () => {
 
           {user ? (
             <>
-              {/* Dashboard Button */}
-              <Button
-                component={RouterLink}
-                to={getDashboardRoute()}
-                startIcon={<Dashboard />}
-                sx={{
-                  color: 'white',
-                  display: { xs: 'none', sm: 'flex' },
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  },
-                }}
-              >
-                Dashboard
-              </Button>
+              {/* Dashboard Button for Admin/Company */}
+              {(user.role === 'University' || user.role === 'Company') && (
+                <Button
+                  onClick={handleDashboardClick}
+                  startIcon={<Dashboard />}
+                  sx={{
+                    color: 'white',
+                    '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
+                    display: { xs: 'none', md: 'flex' }
+                  }}
+                >
+                  Dashboard
+                </Button>
+              )}
 
               {/* User Menu */}
               <IconButton
@@ -198,48 +194,36 @@ const Navbar = () => {
                   sx: {
                     mt: 1.5,
                     minWidth: 220,
-                    backgroundColor: 'rgba(26, 35, 126, 0.95)',
+                    backgroundColor: 'rgba(139, 0, 0, 0.95)',
                     backdropFilter: 'blur(20px)',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                   },
                 }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
               >
                 {/* User Info */}
                 <Box sx={{ px: 2, py: 1.5 }}>
                   <Typography variant="subtitle1" fontWeight="bold">
                     {user.name}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                    {getRoleIcon()}
-                    <Typography variant="caption" color="text.secondary">
-                      {user.role}
-                    </Typography>
-                  </Box>
-                  <Typography 
-                    variant="caption" 
-                    color="text.secondary"
-                    sx={{ display: 'block', mt: 0.5 }}
-                  >
+                  <Typography variant="caption" color="text.secondary">
+                    {user.role}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" display="block">
                     {user.email}
                   </Typography>
                 </Box>
 
-                <Divider sx={{ my: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+                <Divider sx={{ my: 1 }} />
 
-                {/* Dashboard Link - Mobile */}
-                <MenuItem
-                  component={RouterLink}
-                  to={getDashboardRoute()}
-                  onClick={handleClose}
-                  sx={{ display: { sm: 'none' } }}
-                >
-                  <ListItemIcon>
-                    <Dashboard fontSize="small" />
-                  </ListItemIcon>
-                  Dashboard
-                </MenuItem>
+                {/* Dashboard - Mobile */}
+                {(user.role === 'University' || user.role === 'Company') && (
+                  <MenuItem onClick={() => { handleDashboardClick(); handleClose(); }} sx={{ display: { md: 'none' } }}>
+                    <ListItemIcon>
+                      <Dashboard fontSize="small" />
+                    </ListItemIcon>
+                    Dashboard
+                  </MenuItem>
+                )}
 
                 {/* Logout */}
                 <MenuItem onClick={handleLogout}>
@@ -256,9 +240,11 @@ const Navbar = () => {
               to="/login"
               variant="contained"
               sx={{
-                background: 'linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%)',
+                background: 'linear-gradient(135deg, #DAA520 0%, #FFD700 100%)',
+                color: '#8B0000',
+                fontWeight: 'bold',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #303f9f 0%, #3f51b5 100%)',
+                  background: 'linear-gradient(135deg, #B8860B 0%, #DAA520 100%)',
                 },
               }}
             >

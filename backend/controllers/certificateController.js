@@ -1,21 +1,11 @@
-// backend/controllers/certificateController.js
+// backend/controllers/certificateController.js - NO CLOUDINARY VERSION
 const Certificate = require('../models/certificateModel');
 const crypto = require('crypto');
 const { v4: uuidv4 } = require('uuid');
 const PDFDocument = require('pdfkit');
-const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
-const path = require('path');
-const fs = require('fs');
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-// Enhanced PDF generation with better design
-const generatePdfBuffer = (certificateData) => {
+// Generate Certificate PDF - EXACT GALGOTIAS DESIGN
+const generatePdfBuffer = (certData) => {
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument({ 
@@ -23,8 +13,8 @@ const generatePdfBuffer = (certificateData) => {
         layout: 'landscape',
         margin: 50 
       });
-      const buffers = [];
       
+      const buffers = [];
       doc.on('data', buffers.push.bind(buffers));
       doc.on('end', () => resolve(Buffer.concat(buffers)));
       doc.on('error', reject);
@@ -32,87 +22,108 @@ const generatePdfBuffer = (certificateData) => {
       const width = doc.page.width;
       const height = doc.page.height;
 
-      // Border decoration
-      doc.lineWidth(3)
-         .strokeColor('#1a237e')
-         .rect(30, 30, width - 60, height - 60)
+      // OUTER GOLD BORDER
+      doc.lineWidth(8)
+         .strokeColor('#DAA520')
+         .rect(25, 25, width - 50, height - 50)
          .stroke();
       
-      doc.lineWidth(1)
-         .strokeColor('#3f51b5')
+      // INNER BORDER
+      doc.lineWidth(2)
+         .strokeColor('#8B4513')
          .rect(35, 35, width - 70, height - 70)
          .stroke();
 
-      // Certificate Title
-      doc.fontSize(48)
-         .fillColor('#1a237e')
+      // TOP - UNIVERSITY NAME
+      doc.fontSize(32)
+         .fillColor('#8B0000')
          .font('Helvetica-Bold')
-         .text('CERTIFICATE', 0, 80, { align: 'center' });
+         .text('GALGOTIAS UNIVERSITY', 0, 85, { align: 'center' });
 
-      doc.fontSize(20)
-         .fillColor('#666')
-         .font('Helvetica')
-         .text('OF COMPLETION', 0, 140, { align: 'center' });
+      // NAAC Grade (Small text on right)
+      doc.fontSize(10)
+         .fillColor('#8B0000')
+         .text('NAAC GRADE A+', width - 150, 65, { width: 100, align: 'center' });
+      
+      doc.fontSize(9)
+         .text('Accredited University', width - 150, 78, { width: 100, align: 'center' });
 
-      // Decorative line
-      doc.moveTo(width / 2 - 100, 170)
-         .lineTo(width / 2 + 100, 170)
-         .strokeColor('#3f51b5')
+      // CERTIFICATE TITLE
+      doc.fontSize(26)
+         .fillColor('#000')
+         .font('Helvetica-Bold')
+         .text('Certificate of Achievement', 0, 145, { align: 'center' });
+
+      // DECORATIVE LINE
+      doc.moveTo(width / 2 - 120, 180)
+         .lineTo(width / 2 + 120, 180)
+         .strokeColor('#DAA520')
          .lineWidth(2)
          .stroke();
 
-      // Content
-      doc.fontSize(16)
-         .fillColor('#333')
-         .text('This is to certify that', 0, 200, { align: 'center' });
-
-      doc.fontSize(32)
-         .fillColor('#1a237e')
-         .font('Helvetica-Bold')
-         .text(certificateData.studentName, 0, 230, { align: 'center' });
-
-      doc.fontSize(16)
-         .fillColor('#333')
-         .font('Helvetica')
-         .text('has successfully completed the course', 0, 280, { align: 'center' });
-
-      doc.fontSize(24)
-         .fillColor('#3f51b5')
-         .font('Helvetica-Bold')
-         .text(certificateData.course, 0, 310, { align: 'center' });
-
-      doc.fontSize(16)
-         .fillColor('#333')
-         .font('Helvetica')
-         .text(`with a grade of "${certificateData.grade}"`, 0, 355, { align: 'center' });
-
-      // Date and Authority
-      const issueDate = new Date(certificateData.issueDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
+      // BODY TEXT
       doc.fontSize(14)
-         .fillColor('#666')
-         .text(`Issued on: ${issueDate}`, 70, height - 120);
+         .fillColor('#000')
+         .font('Helvetica')
+         .text('This is to certify that', 0, 210, { align: 'center' });
 
-      doc.fontSize(14)
-         .text(`Issuing Authority: ${certificateData.universityName}`, width - 300, height - 120);
+      // STUDENT NAME (Large, Stylized)
+      doc.fontSize(28)
+         .fillColor('#8B0000')
+         .font('Helvetica-BoldOblique')
+         .text(certData.fullName, 0, 245, { align: 'center' });
 
-      // Credential ID at bottom
+      // COURSE DESCRIPTION
+      doc.fontSize(13)
+         .fillColor('#000')
+         .font('Helvetica')
+         .text(`has successfully completed the course ${certData.course} - demonstrating dedication, academic`, 0, 295, { align: 'center' })
+         .text('excellence, and commitment to learning.', 0, 313, { align: 'center' });
+
+      // DETAILED TEXT
+      doc.fontSize(11)
+         .fillColor('#333')
+         .text('Throughout the duration of the course, he has fulfilled all academic requirements, completed', 0, 345, { align: 'center' })
+         .text('assigned coursework, and participated in relevant academic activities as per the standards', 0, 360, { align: 'center' })
+         .text('prescribed by Galgotias University.', 0, 375, { align: 'center' });
+
+      // ADMISSION NUMBER
+      doc.fontSize(13)
+         .fillColor('#000')
+         .font('Helvetica-Bold')
+         .text(`Admission Number: ${certData.admissionNumber}`, 0, 415, { align: 'center' });
+
+      // SIGNATURE SECTION
+      const sigY = height - 130;
+      
+      // Left - Dean Signature
+      doc.fontSize(12)
+         .font('Helvetica')
+         .text('_________________', 120, sigY, { width: 150, align: 'center' });
       doc.fontSize(10)
-         .fillColor('#999')
-         .font('Courier')
-         .text(`Credential ID: ${certificateData.credentialID}`, 0, height - 60, { 
-           align: 'center' 
-         });
+         .text('Signature of Dean', 120, sigY + 20, { width: 150, align: 'center' });
 
-      // QR Code placeholder text
-      doc.fontSize(8)
-         .text('Verify at: yourwebsite.com/verify', 0, height - 40, { 
-           align: 'center' 
-         });
+      // Right - HOD Signature  
+      doc.fontSize(12)
+         .text('_________________', width - 270, sigY, { width: 150, align: 'center' });
+      doc.fontSize(10)
+         .text('Signature of HOD', width - 270, sigY + 20, { width: 150, align: 'center' });
+
+      // FOOTER - Certificate Number
+      doc.fontSize(9)
+         .fillColor('#666')
+         .font('Courier')
+         .text(`Certificate No: ${certData.credentialID}`, 60, height - 70, { width: 300 });
+
+      // FOOTER - Issue Date
+      const issueDate = new Date(certData.issueDate).toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+      });
+      
+      doc.fontSize(9)
+         .text(`Date of Issue: ${issueDate}`, width - 360, height - 70, { width: 300, align: 'right' });
 
       doc.end();
     } catch (error) {
@@ -121,125 +132,178 @@ const generatePdfBuffer = (certificateData) => {
   });
 };
 
-const uploadToCloudinary = (buffer) => {
-  return new Promise((resolve, reject) => {
-    if (!buffer || buffer.length === 0) {
-      return reject(new Error("Cannot upload an empty buffer."));
-    }
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { 
-        folder: 'certificates', 
-        resource_type: 'raw',
-        format: 'pdf'
-      }, 
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
-    streamifier.createReadStream(buffer).pipe(uploadStream);
-  });
-};
-
-const issueCertificate = async (req, res) => {
+// 1. REGISTER CERTIFICATE - Store PDF in MongoDB
+const registerCertificate = async (req, res) => {
   try {
-    const { studentName, course, grade, issueDate } = req.body;
-    const universityName = req.user.name;
+    const { fullName, mobile, email, dateOfBirth, address, collegeName, course, admissionNumber, section, semester } = req.body;
 
-    if (!studentName || !course || !grade || !issueDate) {
-      return res.status(400).json({ message: 'Please fill out all fields' });
+    // Validate
+    if (!fullName || !mobile || !email || !dateOfBirth || !address || !collegeName || !course || !admissionNumber || !section || !semester) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const credentialID = uuidv4();
-    const certificateDataString = `${studentName}${course}${grade}${issueDate}`;
-    const certificateHash = crypto.createHash('sha256').update(certificateDataString).digest('hex');
-    
-    const pdfBuffer = await generatePdfBuffer({ 
-      studentName, 
-      course, 
-      grade, 
-      issueDate, 
-      universityName, 
-      credentialID 
-    });
-    
-    if (pdfBuffer.length === 0) {
-      throw new Error('PDF generation resulted in an empty buffer.');
+    // Check duplicate
+    const exists = await Certificate.findOne({ admissionNumber });
+    if (exists) {
+      return res.status(400).json({ message: 'Certificate already exists for this admission number' });
     }
+
+    // Generate IDs
+    const credentialID = `GU-${Date.now()}-${uuidv4().substring(0, 8).toUpperCase()}`;
+    const certificateHash = crypto.createHash('sha256').update(`${fullName}${admissionNumber}${Date.now()}`).digest('hex');
     
-    const uploadResult = await uploadToCloudinary(pdfBuffer);
+    console.log('\n=== GENERATING CERTIFICATE ===');
+    console.log('Student:', fullName);
+    console.log('Admission:', admissionNumber);
     
-    const newCertificate = await Certificate.create({
-      studentName, 
-      course, 
-      grade, 
-      issueDate, 
-      credentialID, 
-      certificateHash,
-      issuedBy: req.user.id,
-      pdfUrl: uploadResult.secure_url,
+    // Generate PDF
+    const pdfBuffer = await generatePdfBuffer({ fullName, course, admissionNumber, credentialID, issueDate: new Date() });
+    console.log('✓ PDF Generated:', pdfBuffer.length, 'bytes');
+    
+    // Convert to Base64
+    const pdfBase64 = pdfBuffer.toString('base64');
+    console.log('✓ PDF Converted to Base64');
+    
+    // Save to DB with Base64 PDF
+    const certificate = await Certificate.create({
+      fullName, mobile, email, dateOfBirth, address, collegeName, course, admissionNumber, section, semester,
+      credentialID, certificateHash, pdfData: pdfBase64
     });
 
-    res.status(201).json(newCertificate);
+    console.log('✓ Certificate Saved to MongoDB!');
+    console.log('=========================\n');
+
+    res.status(201).json({
+      success: true,
+      message: 'Certificate generated successfully!',
+      certificate: {
+        credentialID: certificate.credentialID,
+        fullName: certificate.fullName,
+        hasPDF: true
+      }
+    });
   } catch (error) {
-    console.error('Certificate issuance error:', error);
-    res.status(500).json({ 
-      message: 'Failed to create or upload PDF.',
-      error: error.message 
-    });
+    console.error('❌ Registration Error:', error);
+    res.status(500).json({ message: 'Failed to generate certificate', error: error.message });
   }
 };
 
+// 2. FETCH CERTIFICATE
+const fetchCertificate = async (req, res) => {
+  try {
+    const { fullName, admissionNumber, dateOfBirth } = req.body;
+
+    const certificate = await Certificate.findOne({ 
+      admissionNumber: admissionNumber.trim() 
+    });
+
+    if (!certificate) {
+      return res.status(404).json({ message: 'Certificate not found' });
+    }
+
+    // Verify name
+    if (certificate.fullName.toLowerCase() !== fullName.trim().toLowerCase()) {
+      return res.status(404).json({ message: 'Name does not match' });
+    }
+
+    // Verify DOB
+    const inputDate = new Date(dateOfBirth).toDateString();
+    const certDate = new Date(certificate.dateOfBirth).toDateString();
+    if (inputDate !== certDate) {
+      return res.status(404).json({ message: 'Date of birth does not match' });
+    }
+
+    res.json(certificate);
+  } catch (error) {
+    console.error('Fetch error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// 3. DOWNLOAD PDF - New endpoint
+const downloadPDF = async (req, res) => {
+  try {
+    const certificate = await Certificate.findOne({ credentialID: req.params.id });
+    
+    if (!certificate || !certificate.pdfData) {
+      return res.status(404).json({ message: 'PDF not found' });
+    }
+
+    // Convert Base64 back to Buffer
+    const pdfBuffer = Buffer.from(certificate.pdfData, 'base64');
+    
+    // Set headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Certificate_${certificate.fullName.replace(/\s+/g, '_')}.pdf`);
+    res.setHeader('Content-Length', pdfBuffer.length);
+    
+    // Send PDF
+    res.send(pdfBuffer);
+    
+    console.log('✓ PDF Downloaded:', certificate.credentialID);
+  } catch (error) {
+    console.error('Download error:', error);
+    res.status(500).json({ message: 'Failed to download PDF' });
+  }
+};
+
+// 4. VERIFY BY CREDENTIAL ID
 const verifyCertificate = async (req, res) => {
   try {
-    const certificate = await Certificate.findOne({ 
-      credentialID: req.params.id 
-    }).populate('issuedBy', 'name');
-    
+    const certificate = await Certificate.findOne({ credentialID: req.params.id });
     if (!certificate) {
-      return res.status(404).json({ message: 'Certificate not found.' });
+      return res.status(404).json({ message: 'Certificate not found' });
     }
-    res.json(certificate);
+    
+    // Don't send pdfData in response (too large)
+    const certCopy = certificate.toObject();
+    delete certCopy.pdfData;
+    
+    res.json(certCopy);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-const getMyCertificates = async (req, res) => {
+// 5. GET ALL (Admin)
+const getAllCertificates = async (req, res) => {
   try {
-    const certificates = await Certificate.find({ 
-      issuedBy: req.user.id 
-    }).sort({ createdAt: -1 });
+    // Don't include pdfData (too large for list view)
+    const certificates = await Certificate.find()
+      .select('-pdfData')
+      .sort({ createdAt: -1 });
+    
+    console.log(`✓ Fetched ${certificates.length} certificates`);
     res.json(certificates);
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Get all error:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// New: Get certificates for a specific student
-const getStudentCertificates = async (req, res) => {
+// 6. VERIFY STATUS (Admin)
+const verifyCertificateStatus = async (req, res) => {
   try {
-    const { studentName } = req.query;
-    
-    if (!studentName) {
-      return res.status(400).json({ message: 'Student name is required' });
+    const certificate = await Certificate.findById(req.params.id);
+    if (!certificate) {
+      return res.status(404).json({ message: 'Certificate not found' });
     }
 
-    const certificates = await Certificate.find({ 
-      studentName: new RegExp(studentName, 'i') 
-    })
-    .populate('issuedBy', 'name')
-    .sort({ createdAt: -1 });
-    
-    res.json(certificates);
+    certificate.isVerified = true;
+    certificate.verifiedBy = req.user.id;
+    await certificate.save();
+
+    res.json({ success: true, message: 'Verified successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
 module.exports = {
-  issueCertificate,
+  registerCertificate,
+  fetchCertificate,
+  downloadPDF,
   verifyCertificate,
-  getMyCertificates,
-  getStudentCertificates,
+  getAllCertificates,
+  verifyCertificateStatus
 };

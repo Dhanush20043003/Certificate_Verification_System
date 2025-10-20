@@ -2,23 +2,29 @@
 const express = require('express');
 const router = express.Router();
 const { 
-  issueCertificate, 
-  verifyCertificate, 
-  getMyCertificates,
-  getStudentCertificates 
+  registerCertificate,
+  fetchCertificate,
+  verifyCertificate,
+  getAllCertificates,
+  verifyCertificateStatus
 } = require('../controllers/certificateController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
-// University: Issue certificates
-router.post('/', protect, authorize('University'), issueCertificate);
+// PUBLIC ROUTES (No login required)
+// Students register for certificate
+router.post('/register', registerCertificate);
 
-// University: Get all certificates issued by them
-router.get('/mycertificates', protect, authorize('University'), getMyCertificates);
+// Students fetch their certificate by details
+router.post('/fetch', fetchCertificate);
 
-// Student: Get their own certificates
-router.get('/student', protect, authorize('Student', 'Company'), getStudentCertificates);
-
-// Public: Verify a certificate by credential ID
+// Anyone can verify certificate by credential ID
 router.get('/verify/:id', verifyCertificate);
+
+// PROTECTED ROUTES (Login required)
+// Admin: Get all certificates
+router.get('/all', protect, authorize('University'), getAllCertificates);
+
+// Admin: Verify a certificate status
+router.put('/verify-status/:id', protect, authorize('University'), verifyCertificateStatus);
 
 module.exports = router;
