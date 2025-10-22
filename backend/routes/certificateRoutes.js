@@ -1,9 +1,10 @@
-// backend/routes/certificateRoutes.js
+// backend/routes/certificateRoutes.js - FIXED WITH DOWNLOAD ROUTE
 const express = require('express');
 const router = express.Router();
 const { 
   registerCertificate,
   fetchCertificate,
+  downloadPDF,
   verifyCertificate,
   getAllCertificates,
   verifyCertificateStatus
@@ -16,6 +17,9 @@ router.post('/register', registerCertificate);
 
 // Students fetch their certificate by details
 router.post('/fetch', fetchCertificate);
+
+// Download PDF by credential ID - THIS IS THE CRITICAL ROUTE
+router.get('/download/:id', downloadPDF);
 
 // Anyone can verify certificate by credential ID
 router.get('/verify/:id', verifyCertificate);

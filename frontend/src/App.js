@@ -18,15 +18,14 @@ function App() {
       <Navbar />
       <Routes>
         {/* Public Routes */}
-        <Route path="/verify" element={<VerifyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         
-        {/* Student Routes - Public (No login needed) */}
-        <Route path="/student-register" element={<StudentRegisterPage />} />
-        <Route path="/download-certificate" element={<DownloadCertificatePage />} />
+        {/* Protected Routes (Login required) */}
+        <Route path="/student-register" element={<ProtectedRoute><StudentRegisterPage /></ProtectedRoute>} />
+        <Route path="/download-certificate" element={<ProtectedRoute><DownloadCertificatePage /></ProtectedRoute>} />
+        <Route path="/verify" element={<ProtectedRoute><VerifyPage /></ProtectedRoute>} />
 
-        {/* Admin Dashboard - Protected (Login required) */}
         <Route
           path="/admin-dashboard"
           element={
@@ -35,8 +34,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* Company Dashboard - Protected (Login required) */}
         <Route
           path="/company-dashboard"
           element={
@@ -46,8 +43,8 @@ function App() {
           }
         />
         
-        {/* Default route - redirect to student register */}
-        <Route path="/" element={<Navigate to="/student-register" />} />
+        {/* Default route - redirect to login */}
+        <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
   );

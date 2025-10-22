@@ -1,14 +1,14 @@
-// frontend/src/pages/LoginPage.js
+// frontend/src/pages/LoginPage.js - SPACE THEME
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import {
   Container, Box, Typography, TextField, Button, Link,
-  InputAdornment, IconButton, Alert, Paper, Fade
+  InputAdornment, IconButton, Alert, Paper, Fade, Chip
 } from '@mui/material';
 import {
-  Visibility, VisibilityOff, Email, Lock, School
+  Visibility, VisibilityOff, Email, Lock, RocketLaunch, Stars
 } from '@mui/icons-material';
 
 const LoginPage = () => {
@@ -33,19 +33,16 @@ const LoginPage = () => {
 
     try {
       const res = await axios.post('/api/users/login', { email, password });
-      console.log('Login response:', res.data); // Debug log
+      console.log('Login response:', res.data);
       
-      login(res.data); // Save to context and localStorage
+      login(res.data);
       
       // Redirect based on role
       if (res.data.role === 'University') {
-        console.log('Redirecting to admin dashboard');
         navigate('/admin-dashboard');
       } else if (res.data.role === 'Company') {
-        console.log('Redirecting to company dashboard');
         navigate('/company-dashboard');
       } else {
-        console.log('Redirecting to student register');
         navigate('/student-register');
       }
     } catch (err) {
@@ -68,48 +65,167 @@ const LoginPage = () => {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        background: 'linear-gradient(135deg, #0a0e27 0%, #1a237e 50%, #283593 100%)',
+        justifyContent: 'center',
         position: 'relative',
         overflow: 'hidden',
+        py: 4,
       }}
     >
-      <Container component="main" maxWidth="sm">
+      {/* Animated Background Elements */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '10%',
+          right: '10%',
+          width: 300,
+          height: 300,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(0, 186, 255, 0.15) 0%, transparent 70%)',
+          animation: 'float 6s ease-in-out infinite',
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '15%',
+          left: '5%',
+          width: 200,
+          height: 200,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(102, 0, 255, 0.15) 0%, transparent 70%)',
+          animation: 'float 8s ease-in-out infinite',
+          animationDelay: '2s',
+          zIndex: 0,
+        }}
+      />
+
+      <Container component="main" maxWidth="sm" sx={{ position: 'relative', zIndex: 1 }}>
         <Fade in timeout={800}>
           <Paper
             elevation={24}
             sx={{
               padding: { xs: 3, sm: 5 },
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              background: 'rgba(10, 20, 40, 0.8)',
               backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(0, 186, 255, 0.3)',
               borderRadius: 4,
+              boxShadow: '0 0 40px rgba(0, 186, 255, 0.2)',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: 'linear-gradient(90deg, #00baff 0%, #6600ff 50%, #00baff 100%)',
+                backgroundSize: '200% 100%',
+                animation: 'energy-flow 2s linear infinite',
+              },
             }}
           >
+            {/* Logo and Title */}
             <Box
               sx={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%)',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px',
-                boxShadow: '0 8px 24px rgba(63, 81, 181, 0.4)',
+                mb: 4,
               }}
             >
-              <School sx={{ fontSize: 40, color: 'white' }} />
+              <Box
+                sx={{
+                  width: 90,
+                  height: 90,
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #00baff 0%, #0066ff 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 2,
+                  boxShadow: '0 0 40px rgba(0, 186, 255, 0.6)',
+                  animation: 'glow 2s ease-in-out infinite',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    border: '2px solid rgba(0, 186, 255, 0.3)',
+                    animation: 'pulse-ring 2s ease-out infinite',
+                  },
+                }}
+              >
+                <RocketLaunch sx={{ fontSize: 45, color: '#000' }} />
+              </Box>
+
+              <Typography 
+                component="h1" 
+                variant="h3" 
+                sx={{
+                  fontFamily: '"Orbitron", sans-serif',
+                  fontWeight: 800,
+                  color: '#00baff',
+                  textShadow: '0 0 20px rgba(0, 186, 255, 0.7)',
+                  letterSpacing: '3px',
+                  mb: 1,
+                }}
+              >
+                CERTICHAIN
+              </Typography>
+
+              <Chip 
+                icon={<Stars sx={{ color: '#00baff !important' }} />}
+                label="BLOCKCHAIN VERIFIED"
+                sx={{
+                  background: 'rgba(0, 186, 255, 0.1)',
+                  border: '1px solid rgba(0, 186, 255, 0.3)',
+                  color: '#00baff',
+                  fontFamily: '"Orbitron", sans-serif',
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  letterSpacing: '1px',
+                }}
+              />
             </Box>
 
-            <Typography component="h1" variant="h4" fontWeight="bold" gutterBottom align="center">
-              Welcome Back
+            <Typography 
+              variant="h5" 
+              align="center"
+              sx={{
+                fontFamily: '"Rajdhani", sans-serif',
+                fontWeight: 600,
+                mb: 1,
+              }}
+            >
+              WELCOME BACK
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }} align="center">
-              Sign in to access your account
+            <Typography 
+              variant="body2" 
+              align="center"
+              sx={{ 
+                mb: 3,
+                color: 'rgba(255, 255, 255, 0.6)',
+              }}
+            >
+              Sign in to access your secure portal
             </Typography>
 
             {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
+              <Alert 
+                severity="error" 
+                sx={{ 
+                  mb: 2,
+                  background: 'rgba(255, 0, 102, 0.1)',
+                  border: '1px solid rgba(255, 0, 102, 0.3)',
+                  '& .MuiAlert-icon': {
+                    color: '#ff0066',
+                  },
+                }}
+              >
                 {error}
               </Alert>
             )}
@@ -120,7 +236,7 @@ const LoginPage = () => {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="EMAIL ADDRESS"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -129,9 +245,16 @@ const LoginPage = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Email color="primary" />
+                      <Email sx={{ color: '#00baff' }} />
                     </InputAdornment>
                   ),
+                }}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontSize: '0.85rem',
+                    letterSpacing: '1px',
+                  },
                 }}
               />
 
@@ -140,7 +263,7 @@ const LoginPage = () => {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="PASSWORD"
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
@@ -149,7 +272,7 @@ const LoginPage = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock color="primary" />
+                      <Lock sx={{ color: '#00baff' }} />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -157,11 +280,24 @@ const LoginPage = () => {
                       <IconButton
                         onClick={() => setShowPassword(!showPassword)}
                         edge="end"
+                        sx={{
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          '&:hover': {
+                            color: '#00baff',
+                          },
+                        }}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
+                }}
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontSize: '0.85rem',
+                    letterSpacing: '1px',
+                  },
                 }}
               />
 
@@ -175,10 +311,39 @@ const LoginPage = () => {
                   mb: 2,
                   py: 1.5,
                   fontSize: '1.1rem',
-                  background: 'linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%)',
+                  fontFamily: '"Orbitron", sans-serif',
+                  fontWeight: 700,
+                  letterSpacing: '2px',
+                  background: 'linear-gradient(135deg, #00baff 0%, #0066ff 100%)',
+                  color: '#000',
+                  boxShadow: '0 0 30px rgba(0, 186, 255, 0.5)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: '-100%',
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
+                    transition: 'left 0.5s ease',
+                  },
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, #33c9ff 0%, #3388ff 100%)',
+                    boxShadow: '0 0 40px rgba(0, 186, 255, 0.7)',
+                    transform: 'translateY(-2px)',
+                  },
+                  '&:hover::before': {
+                    left: '100%',
+                  },
+                  '&:disabled': {
+                    background: 'rgba(0, 186, 255, 0.2)',
+                    color: 'rgba(255, 255, 255, 0.3)',
+                  },
                 }}
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                {loading ? 'INITIATING...' : 'SIGN IN'}
               </Button>
 
               <Box sx={{ textAlign: 'center', mt: 2 }}>
@@ -187,18 +352,128 @@ const LoginPage = () => {
                   to="/register"
                   variant="body2"
                   sx={{
-                    color: 'primary.light',
+                    color: '#00baff',
                     textDecoration: 'none',
-                    '&:hover': { textDecoration: 'underline' },
+                    fontFamily: '"Rajdhani", sans-serif',
+                    fontWeight: 600,
+                    fontSize: '1rem',
+                    transition: 'all 0.3s ease',
+                    '&:hover': { 
+                      textShadow: '0 0 10px rgba(0, 186, 255, 0.8)',
+                      textDecoration: 'underline',
+                    },
                   }}
                 >
-                  Don't have an account? Register here
+                  Don't have an account? Register here →
                 </Link>
               </Box>
             </Box>
+
+            {/* Security Badge */}
+            <Box
+              sx={{
+                mt: 3,
+                pt: 3,
+                borderTop: '1px solid rgba(0, 186, 255, 0.2)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: '50%',
+                  background: 'rgba(0, 255, 136, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '2px solid #00ff88',
+                  boxShadow: '0 0 15px rgba(0, 255, 136, 0.5)',
+                }}
+              >
+                <Lock sx={{ fontSize: 16, color: '#00ff88' }} />
+              </Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  fontFamily: '"Rajdhani", sans-serif',
+                  letterSpacing: '0.5px',
+                }}
+              >
+                256-BIT ENCRYPTED CONNECTION
+              </Typography>
+            </Box>
           </Paper>
         </Fade>
+
+        {/* Floating Particles */}
+        {[...Array(5)].map((_, i) => (
+          <Box
+            key={i}
+            sx={{
+              position: 'absolute',
+              width: 4,
+              height: 4,
+              borderRadius: '50%',
+              background: '#00baff',
+              boxShadow: '0 0 10px rgba(0, 186, 255, 0.8)',
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animation: `particle-float ${5 + Math.random() * 5}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 5}s`,
+              opacity: 0.6,
+              zIndex: 0,
+            }}
+          />
+        ))}
       </Container>
+
+      <style>
+        {`
+          @keyframes pulse-ring {
+            0% {
+              transform: scale(1);
+              opacity: 1;
+            }
+            100% {
+              transform: scale(1.5);
+              opacity: 0;
+            }
+          }
+
+          @keyframes particle-float {
+            0%, 100% {
+              transform: translate(0, 0) scale(1);
+              opacity: 0.3;
+            }
+            25% {
+              transform: translate(30px, -30px) scale(1.2);
+              opacity: 0.6;
+            }
+            50% {
+              transform: translate(60px, -60px) scale(1.5);
+              opacity: 0.8;
+            }
+            75% {
+              transform: translate(30px, -90px) scale(1.2);
+              opacity: 0.6;
+            }
+          }
+
+          @keyframes energy-flow {
+            0% {
+              background-position: 0% 50%;
+            }
+            100% {
+              background-position: 200% 50%;
+            }
+          }
+        `}
+      </style>
     </Box>
   );
 };
