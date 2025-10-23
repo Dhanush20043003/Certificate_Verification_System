@@ -1,10 +1,10 @@
-// frontend/src/App.js
+// frontend/src/App.js - UPDATED ROUTES
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import StudentRegisterPage from './pages/StudentRegisterPage';
-import DownloadCertificatePage from './pages/DownloadCertificatePage';
+import ViewCertificatePage from './pages/ViewCertificatePage'; // RENAMED
 import AdminDashboard from './pages/AdminDashboard';
 import CompanyDashboard from './pages/CompanyDashboard';
 import VerifyPage from './pages/VerifyPage';
@@ -18,14 +18,15 @@ function App() {
       <Navbar />
       <Routes>
         {/* Public Routes */}
+        <Route path="/verify" element={<VerifyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         
-        {/* Protected Routes (Login required) */}
-        <Route path="/student-register" element={<ProtectedRoute><StudentRegisterPage /></ProtectedRoute>} />
-        <Route path="/download-certificate" element={<ProtectedRoute><DownloadCertificatePage /></ProtectedRoute>} />
-        <Route path="/verify" element={<ProtectedRoute><VerifyPage /></ProtectedRoute>} />
+        {/* Student Routes - Public (No login needed) */}
+        <Route path="/student-register" element={<StudentRegisterPage />} />
+        <Route path="/view-certificate" element={<ViewCertificatePage />} /> {/* RENAMED */}
 
+        {/* Admin Dashboard - Protected (Login required) */}
         <Route
           path="/admin-dashboard"
           element={
@@ -34,6 +35,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Company Dashboard - Protected (Login required) */}
         <Route
           path="/company-dashboard"
           element={
@@ -43,8 +46,8 @@ function App() {
           }
         />
         
-        {/* Default route - redirect to login */}
-        <Route path="/" element={<Navigate to="/login" />} />
+        {/* Default route - redirect to student register */}
+        <Route path="/" element={<Navigate to="/student-register" />} />
       </Routes>
     </Router>
   );

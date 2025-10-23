@@ -1,11 +1,11 @@
-// frontend/src/components/Navbar.js - FIXED WITH CONDITIONAL RENDERING
+// frontend/src/components/Navbar.js - UPDATED (View instead of Download)
 import React, { useContext } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, Box, IconButton,
   Menu, MenuItem, Avatar, Divider, ListItemIcon
 } from '@mui/material';
 import {
-  School, Verified, Dashboard, Logout, HowToReg, Download, RocketLaunch
+  School, Verified, Dashboard, Logout, HowToReg, Visibility, RocketLaunch
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
@@ -128,7 +128,7 @@ const Navbar = () => {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {!isAuthPage && (
             <>
-              {/* Register Certificate - Show only when logged in OR on public pages */}
+              {/* Register Certificate */}
               {(user || !isAuthPage) && (
                 <Button
                   component={RouterLink}
@@ -151,12 +151,12 @@ const Navbar = () => {
                 </Button>
               )}
 
-              {/* Download - Show only when logged in OR on public pages */}
+              {/* View Certificate - CHANGED FROM DOWNLOAD */}
               {(user || !isAuthPage) && (
                 <Button
                   component={RouterLink}
-                  to="/download-certificate"
-                  startIcon={<Download />}
+                  to="/view-certificate"
+                  startIcon={<Visibility />}
                   sx={{
                     color: 'white',
                     fontFamily: '"Orbitron", sans-serif',
@@ -170,11 +170,11 @@ const Navbar = () => {
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  DOWNLOAD
+                  VIEW
                 </Button>
               )}
 
-              {/* Verify - Show only when logged in OR on public pages */}
+              {/* Verify */}
               {(user || !isAuthPage) && (
                 <Button
                   component={RouterLink}
@@ -336,7 +336,6 @@ const Navbar = () => {
               </Menu>
             </>
           ) : (
-            // Show Login button only when NOT on auth pages
             !isAuthPage && (
               <Button
                 component={RouterLink}

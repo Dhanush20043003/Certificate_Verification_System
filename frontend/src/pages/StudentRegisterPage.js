@@ -1,4 +1,4 @@
-// frontend/src/pages/StudentRegisterPage.js
+// frontend/src/pages/StudentRegisterPage.js - SPACE THEME (BLUE)
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import {
   Container, Box, Typography, TextField, Button, Alert,
   Paper, Grid, CircularProgress
 } from '@mui/material';
+import { HowToReg, RocketLaunch } from '@mui/icons-material';
 
 const StudentRegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -39,11 +40,11 @@ const StudentRegisterPage = () => {
 
     try {
       const res = await axios.post('/api/certificates/register', formData);
-      setMessage('Certificate registered successfully! Redirecting...');
+      setMessage('Certificate registered successfully! Redirecting to view page...');
       console.log('Registration success:', res.data);
       
       setTimeout(() => {
-        navigate('/download-certificate');
+        navigate('/view-certificate');
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
@@ -54,22 +55,116 @@ const StudentRegisterPage = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', background: '#8B0000', py: 6 }}>
+    <Box sx={{ minHeight: '100vh', py: 6 }}>
       <Container maxWidth="md">
-        <Paper elevation={12} sx={{ p: 4, backgroundColor: '#E8E8E8' }}>
-          <Typography variant="h4" align="center" sx={{ color: '#8B0000', fontWeight: 'bold', mb: 4 }}>
-            Register for Your Certificate
+        {/* Header */}
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Box
+            sx={{
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #00baff 0%, #0066ff 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              boxShadow: '0 0 40px rgba(0, 186, 255, 0.6)',
+              animation: 'glow 2s ease-in-out infinite',
+            }}
+          >
+            <HowToReg sx={{ fontSize: 40, color: '#000' }} />
+          </Box>
+          <Typography 
+            variant="h3" 
+            sx={{
+              fontFamily: '"Orbitron", sans-serif',
+              fontWeight: 800,
+              color: '#00baff',
+              textShadow: '0 0 20px rgba(0, 186, 255, 0.7)',
+              letterSpacing: '2px',
+              mb: 1,
+            }}
+          >
+            REGISTER CERTIFICATE
           </Typography>
+          <Typography 
+            variant="h6"
+            sx={{
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontFamily: '"Rajdhani", sans-serif',
+            }}
+          >
+            Submit your details for blockchain verification
+          </Typography>
+        </Box>
 
-          {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+        <Paper 
+          elevation={12} 
+          sx={{ 
+            p: 4,
+            background: 'rgba(10, 20, 40, 0.8)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(0, 186, 255, 0.3)',
+            boxShadow: '0 0 40px rgba(0, 186, 255, 0.2)',
+            position: 'relative',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: 'linear-gradient(90deg, #00baff 0%, #6600ff 50%, #00baff 100%)',
+              backgroundSize: '200% 100%',
+              animation: 'energy-flow 2s linear infinite',
+            },
+          }}
+        >
+          {message && (
+            <Alert 
+              severity="success" 
+              sx={{ 
+                mb: 2,
+                background: 'rgba(0, 255, 136, 0.1)',
+                border: '1px solid rgba(0, 255, 136, 0.3)',
+                '& .MuiAlert-icon': {
+                  color: '#00ff88',
+                },
+              }}
+            >
+              {message}
+            </Alert>
+          )}
+          
+          {error && (
+            <Alert 
+              severity="error" 
+              sx={{ 
+                mb: 2,
+                background: 'rgba(255, 0, 102, 0.1)',
+                border: '1px solid rgba(255, 0, 102, 0.3)',
+              }}
+            >
+              {error}
+            </Alert>
+          )}
 
           <Box component="form" onSubmit={onSubmit}>
             <Grid container spacing={2}>
               {/* Full Name */}
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Full Name:
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  FULL NAME:
                 </Typography>
                 <TextField
                   fullWidth
@@ -79,19 +174,26 @@ const StudentRegisterPage = () => {
                   onChange={onChange}
                   placeholder="Enter your full name"
                   sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' },
-                      '& fieldset': { borderColor: '#555' }
-                    }
+                    '& .MuiInputLabel-root': {
+                      fontFamily: '"Orbitron", sans-serif',
+                    },
                   }}
                 />
               </Grid>
 
               {/* Mobile */}
-              <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Mobile:
+              <Grid item xs={12} md={6}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  MOBILE:
                 </Typography>
                 <TextField
                   fullWidth
@@ -100,19 +202,22 @@ const StudentRegisterPage = () => {
                   value={formData.mobile}
                   onChange={onChange}
                   placeholder="Enter your mobile number"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
                 />
               </Grid>
 
               {/* Email */}
-              <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Email:
+              <Grid item xs={12} md={6}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  EMAIL:
                 </Typography>
                 <TextField
                   fullWidth
@@ -122,19 +227,22 @@ const StudentRegisterPage = () => {
                   value={formData.email}
                   onChange={onChange}
                   placeholder="Enter your email address"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
                 />
               </Grid>
 
               {/* Date of Birth */}
-              <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Date of Birth:
+              <Grid item xs={12} md={6}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  DATE OF BIRTH:
                 </Typography>
                 <TextField
                   fullWidth
@@ -144,19 +252,22 @@ const StudentRegisterPage = () => {
                   value={formData.dateOfBirth}
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
                 />
               </Grid>
 
               {/* College Name */}
-              <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  College Name:
+              <Grid item xs={12} md={6}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  COLLEGE NAME:
                 </Typography>
                 <TextField
                   fullWidth
@@ -165,19 +276,22 @@ const StudentRegisterPage = () => {
                   value={formData.collegeName}
                   onChange={onChange}
                   placeholder="Enter your college name"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
                 />
               </Grid>
 
               {/* Course */}
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Course:
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  COURSE:
                 </Typography>
                 <TextField
                   fullWidth
@@ -186,19 +300,22 @@ const StudentRegisterPage = () => {
                   value={formData.course}
                   onChange={onChange}
                   placeholder="Enter your course name"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
                 />
               </Grid>
 
               {/* Admission Number */}
-              <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Admission Number:
+              <Grid item xs={12} md={6}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  ADMISSION NUMBER:
                 </Typography>
                 <TextField
                   fullWidth
@@ -207,19 +324,22 @@ const StudentRegisterPage = () => {
                   value={formData.admissionNumber}
                   onChange={onChange}
                   placeholder="Enter your admission number"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
                 />
               </Grid>
 
               {/* Section */}
-              <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Section:
+              <Grid item xs={12} md={3}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  SECTION:
                 </Typography>
                 <TextField
                   fullWidth
@@ -227,20 +347,23 @@ const StudentRegisterPage = () => {
                   name="section"
                   value={formData.section}
                   onChange={onChange}
-                  placeholder="Enter your section"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
+                  placeholder="e.g., A"
                 />
               </Grid>
 
               {/* Semester */}
-              <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Semester:
+              <Grid item xs={12} md={3}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  SEMESTER:
                 </Typography>
                 <TextField
                   fullWidth
@@ -248,20 +371,23 @@ const StudentRegisterPage = () => {
                   name="semester"
                   value={formData.semester}
                   onChange={onChange}
-                  placeholder="Enter your semester"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& input': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
+                  placeholder="e.g., 6"
                 />
               </Grid>
 
               {/* Address */}
               <Grid item xs={12}>
-                <Typography variant="body2" sx={{ color: '#000', fontWeight: 600, mb: 0.5 }}>
-                  Address:
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: '#00baff',
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 600,
+                    mb: 0.5,
+                    letterSpacing: '1px',
+                  }}
+                >
+                  ADDRESS:
                 </Typography>
                 <TextField
                   fullWidth
@@ -272,12 +398,6 @@ const StudentRegisterPage = () => {
                   value={formData.address}
                   onChange={onChange}
                   placeholder="Enter your full address"
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: '#2C2C2C',
-                      '& textarea': { color: '#FFF', padding: '12px' }
-                    }
-                  }}
                 />
               </Grid>
 
@@ -292,19 +412,50 @@ const StudentRegisterPage = () => {
                   sx={{
                     py: 1.5,
                     fontSize: '1.1rem',
-                    fontWeight: 'bold',
-                    backgroundColor: '#8B0000',
-                    '&:hover': { backgroundColor: '#660000' },
-                    '&:disabled': { backgroundColor: '#999' }
+                    fontFamily: '"Orbitron", sans-serif',
+                    fontWeight: 700,
+                    letterSpacing: '2px',
+                    background: 'linear-gradient(135deg, #00baff 0%, #0066ff 100%)',
+                    color: '#000',
+                    boxShadow: '0 0 30px rgba(0, 186, 255, 0.5)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #33c9ff 0%, #3388ff 100%)',
+                      boxShadow: '0 0 40px rgba(0, 186, 255, 0.7)',
+                      transform: 'translateY(-2px)',
+                    },
+                    '&:disabled': {
+                      background: 'rgba(0, 186, 255, 0.2)',
+                      color: 'rgba(255, 255, 255, 0.3)',
+                    },
                   }}
                 >
-                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Submit'}
+                  {loading ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <CircularProgress size={24} sx={{ color: '#000' }} />
+                      SUBMITTING...
+                    </Box>
+                  ) : (
+                    'SUBMIT & REGISTER'
+                  )}
                 </Button>
               </Grid>
             </Grid>
           </Box>
         </Paper>
       </Container>
+
+      <style>
+        {`
+          @keyframes energy-flow {
+            0% {
+              background-position: 0% 50%;
+            }
+            100% {
+              background-position: 200% 50%;
+            }
+          }
+        `}
+      </style>
     </Box>
   );
 };
