@@ -1,9 +1,10 @@
-// controllers/userController.js
+// backend/controllers/userController.js - WITH ADMIN LOGIN
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const adminConfig = require('../config/adminConfig');
 
-// @desc    Register a new user
+// @desc    Register a new user (Student or Company only)
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = async (req, res) => {
@@ -14,26 +15,31 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ message: 'Please enter all fields' });
   }
 
-  // 2. Check if user already exists
+  // 2. Prevent University registration through API
+  if (role === 'University') {
+    return res.status(403).json({ message: 'University accounts cannot be created through registration. Please contact system administrator.' });
+  }
+
+  // 3. Check if user already exists
   const userExists = await User.findOne({ email });
   if (userExists) {
     return res.status(400).json({ message: 'User already exists' });
   }
 
-  // 3. Hash the password
+  // 4. Hash the password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  // 4. Create and save the new user
+  // 5. Create and save the new user
   const user = await User.create({
     name,
     email,
     password: hashedPassword,
-    role, // role will be 'University' by default if not provided
+    role: role || 'Student', // Default to Student if not provided
   });
 
   if (user) {
-    // 5. Respond with user data and a token
+    // 6. Respond with user data and a token
     res.status(201).json({
       _id: user.id,
       name: user.name,
@@ -46,12 +52,30 @@ const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Authenticate (login) a user
+// @desc    Authenticate (login) a user or admin
 // @route   POST /api/users/login
 // @access  Public
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  // CHECK IF ADMIN LOGIN
+  if (email === adminConfig.admin.email) {
+    // Admin login attempt
+    if (password === adminConfig.admin.password) {
+      // Admin credentials match
+      return res.json({
+        _id: adminConfig.admin._id,
+        name: adminConfig.admin.name,
+        email: adminConfig.admin.email,
+        role: adminConfig.admin.role,
+        token: generateToken(adminConfig.admin._id),
+      });
+    } else {
+      return res.status(401).json({ message: 'Invalid admin credentials' });
+    }
+  }
+
+  // REGULAR USER LOGIN
   // 1. Find the user by email
   const user = await User.findOne({ email });
 

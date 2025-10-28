@@ -1,4 +1,4 @@
-// frontend/src/pages/RegisterPage.js
+// frontend/src/pages/RegisterPage.js - UNIVERSITY REMOVED FROM REGISTRATION
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
@@ -17,7 +17,7 @@ const RegisterPage = () => {
     name: '',
     email: '',
     password: '',
-    role: 'Student'
+    role: 'Student'  // Default to Student since University is removed
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -56,6 +56,7 @@ const RegisterPage = () => {
     }
   };
 
+  // UPDATED: Only Student and Company roles
   const roleInfo = {
     Student: {
       icon: <Person sx={{ fontSize: 40 }} />,
@@ -68,12 +69,6 @@ const RegisterPage = () => {
       color: '#ff4081',
       description: 'Verify candidate certificates instantly',
       features: ['Verify certificates', 'Download PDFs', 'View candidate details']
-    },
-    University: {
-      icon: <School sx={{ fontSize: 40 }} />,
-      color: '#3f51b5',
-      description: 'Issue and manage certificates for students',
-      features: ['Issue certificates', 'Manage records', 'Full admin access']
     }
   };
 
@@ -144,7 +139,7 @@ const RegisterPage = () => {
               </Alert>
             )}
 
-            {/* Role Selection */}
+            {/* Role Selection - ONLY STUDENT AND COMPANY */}
             <Box sx={{ mb: 4 }}>
               <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                 I am registering as:
@@ -178,12 +173,6 @@ const RegisterPage = () => {
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
                     <Business />
                     <Typography variant="body2">Company</Typography>
-                  </Box>
-                </ToggleButton>
-                <ToggleButton value="University">
-                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.5 }}>
-                    <School />
-                    <Typography variant="body2">University</Typography>
                   </Box>
                 </ToggleButton>
               </ToggleButtonGroup>
@@ -228,7 +217,7 @@ const RegisterPage = () => {
                 margin="normal"
                 required
                 fullWidth
-                label={role === 'University' ? 'University Name' : 'Full Name'}
+                label="Full Name"
                 name="name"
                 autoFocus
                 value={name}
@@ -236,7 +225,7 @@ const RegisterPage = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      {role === 'University' ? <School color="primary" /> : <Person color="primary" />}
+                      <Person color="primary" />
                     </InputAdornment>
                   ),
                 }}
@@ -320,6 +309,20 @@ const RegisterPage = () => {
                   Already have an account? Login here
                 </Link>
               </Box>
+            </Box>
+
+            {/* Admin Note */}
+            <Box
+              sx={{
+                mt: 3,
+                pt: 3,
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="caption" color="text.secondary">
+                University admins should use the dedicated admin login credentials
+              </Typography>
             </Box>
           </Paper>
         </Fade>
