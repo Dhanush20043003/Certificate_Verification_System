@@ -1,4 +1,4 @@
-// frontend/src/pages/StudentRegisterPage.js - SPACE THEME (BLUE)
+// frontend/src/pages/StudentRegisterPage.js - FIXED (Removed unused import)
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import {
   Container, Box, Typography, TextField, Button, Alert,
   Paper, Grid, CircularProgress
 } from '@mui/material';
-import { HowToReg, RocketLaunch } from '@mui/icons-material';
+import { HowToReg } from '@mui/icons-material';
 
 const StudentRegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -95,7 +95,7 @@ const StudentRegisterPage = () => {
               fontFamily: '"Rajdhani", sans-serif',
             }}
           >
-            Submit your details for blockchain verification
+            Submit your details for secure verification
           </Typography>
         </Box>
 
@@ -173,11 +173,6 @@ const StudentRegisterPage = () => {
                   value={formData.fullName}
                   onChange={onChange}
                   placeholder="Enter your full name"
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      fontFamily: '"Orbitron", sans-serif',
-                    },
-                  }}
                 />
               </Grid>
 

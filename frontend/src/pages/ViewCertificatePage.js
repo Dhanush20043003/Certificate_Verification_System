@@ -1,11 +1,11 @@
-// frontend/src/pages/ViewCertificatePage.js - VIEW ONLY (NO DOWNLOAD)
+// frontend/src/pages/ViewCertificatePage.js - FIXED (Removed unused import & blockchain refs)
 import React, { useState } from 'react';
 import axios from 'axios';
 import {
   Container, Box, Typography, TextField, Button, Alert,
   Paper, Card, CardContent, Divider, CircularProgress, Chip
 } from '@mui/material';
-import { Verified, Search, RocketLaunch, Shield, Visibility } from '@mui/icons-material';
+import { Verified, Search, Shield, Visibility } from '@mui/icons-material';
 
 const ViewCertificatePage = () => {
   const [formData, setFormData] = useState({
@@ -81,7 +81,7 @@ const ViewCertificatePage = () => {
               fontFamily: '"Rajdhani", sans-serif',
             }}
           >
-            View your verified blockchain certificate
+            View your verified certificate
           </Typography>
         </Box>
 
@@ -385,7 +385,7 @@ const ViewCertificatePage = () => {
                     display: 'block',
                   }}
                 >
-                  BLOCKCHAIN SECURED
+                  DIGITALLY SECURED
                 </Typography>
                 <Typography 
                   variant="caption" 

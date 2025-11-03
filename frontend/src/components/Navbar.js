@@ -1,11 +1,11 @@
-// frontend/src/components/Navbar.js - UPDATED (View instead of Download)
+// frontend/src/components/Navbar.js - FIXED (Removed unused import & blockchain refs)
 import React, { useContext } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, Box, IconButton,
   Menu, MenuItem, Avatar, Divider, ListItemIcon
 } from '@mui/material';
 import {
-  School, Verified, Dashboard, Logout, HowToReg, Visibility, RocketLaunch
+  Verified, Dashboard, Logout, HowToReg, Visibility, RocketLaunch
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
@@ -119,7 +119,7 @@ const Navbar = () => {
                 letterSpacing: '1px',
               }}
             >
-              BLOCKCHAIN VERIFIED
+              DIGITALLY VERIFIED
             </Typography>
           </Box>
         </Box>
@@ -151,7 +151,7 @@ const Navbar = () => {
                 </Button>
               )}
 
-              {/* View Certificate - CHANGED FROM DOWNLOAD */}
+              {/* View Certificate */}
               {(user || !isAuthPage) && (
                 <Button
                   component={RouterLink}
