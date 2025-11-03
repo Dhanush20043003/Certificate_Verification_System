@@ -179,7 +179,7 @@ const LoginPage = () => {
 
               <Chip 
                 icon={<Stars sx={{ color: '#00baff !important' }} />}
-                label="BLOCKCHAIN VERIFIED"
+                label="VERIFIED"
                 sx={{
                   background: 'rgba(0, 186, 255, 0.1)',
                   border: '1px solid rgba(0, 186, 255, 0.3)',

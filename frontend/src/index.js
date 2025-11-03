@@ -1,20 +1,23 @@
-// src/index.js
+// src/index.js - WITH ERROR BOUNDARY
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from '@mui/material/styles'; // Import ThemeProvider
-import CssBaseline from '@mui/material/CssBaseline'; // Import CssBaseline for normalization
-import theme from './theme'; // Import our custom theme
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './theme';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}> {/* Wrap everything with the ThemeProvider */}
-      <CssBaseline /> {/* This resets CSS and applies background colors */}
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

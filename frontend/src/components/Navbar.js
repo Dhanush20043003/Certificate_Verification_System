@@ -1,4 +1,4 @@
-// frontend/src/components/Navbar.js - FIXED (Removed unused import & blockchain refs)
+// frontend/src/components/Navbar.js - FIXED (Safe user name access)
 import React, { useContext } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, Box, IconButton,
@@ -55,6 +55,12 @@ const Navbar = () => {
       default:
         return '#00baff';
     }
+  };
+
+  // FIXED: Safe way to get user initial
+  const getUserInitial = () => {
+    if (!user || !user.name) return '?';
+    return user.name.charAt(0).toUpperCase();
   };
 
   return (
@@ -129,72 +135,66 @@ const Navbar = () => {
           {!isAuthPage && (
             <>
               {/* Register Certificate */}
-              {(user || !isAuthPage) && (
-                <Button
-                  component={RouterLink}
-                  to="/student-register"
-                  startIcon={<HowToReg />}
-                  sx={{
-                    color: 'white',
-                    fontFamily: '"Orbitron", sans-serif',
-                    fontWeight: 600,
-                    letterSpacing: '0.5px',
-                    '&:hover': { 
-                      backgroundColor: 'rgba(0, 186, 255, 0.1)',
-                      boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
-                    },
-                    display: { xs: 'none', sm: 'flex' },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  REGISTER
-                </Button>
-              )}
+              <Button
+                component={RouterLink}
+                to="/student-register"
+                startIcon={<HowToReg />}
+                sx={{
+                  color: 'white',
+                  fontFamily: '"Orbitron", sans-serif',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                    boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                  },
+                  display: { xs: 'none', sm: 'flex' },
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                REGISTER
+              </Button>
 
               {/* View Certificate */}
-              {(user || !isAuthPage) && (
-                <Button
-                  component={RouterLink}
-                  to="/view-certificate"
-                  startIcon={<Visibility />}
-                  sx={{
-                    color: 'white',
-                    fontFamily: '"Orbitron", sans-serif',
-                    fontWeight: 600,
-                    letterSpacing: '0.5px',
-                    '&:hover': { 
-                      backgroundColor: 'rgba(0, 186, 255, 0.1)',
-                      boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
-                    },
-                    display: { xs: 'none', sm: 'flex' },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  VIEW
-                </Button>
-              )}
+              <Button
+                component={RouterLink}
+                to="/view-certificate"
+                startIcon={<Visibility />}
+                sx={{
+                  color: 'white',
+                  fontFamily: '"Orbitron", sans-serif',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                    boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                  },
+                  display: { xs: 'none', sm: 'flex' },
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                VIEW
+              </Button>
 
               {/* Verify */}
-              {(user || !isAuthPage) && (
-                <Button
-                  component={RouterLink}
-                  to="/verify"
-                  startIcon={<Verified />}
-                  sx={{
-                    color: 'white',
-                    fontFamily: '"Orbitron", sans-serif',
-                    fontWeight: 600,
-                    letterSpacing: '0.5px',
-                    '&:hover': { 
-                      backgroundColor: 'rgba(0, 186, 255, 0.1)',
-                      boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  VERIFY
-                </Button>
-              )}
+              <Button
+                component={RouterLink}
+                to="/verify"
+                startIcon={<Verified />}
+                sx={{
+                  color: 'white',
+                  fontFamily: '"Orbitron", sans-serif',
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  '&:hover': { 
+                    backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                    boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                  },
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                VERIFY
+              </Button>
             </>
           )}
 
@@ -247,7 +247,7 @@ const Navbar = () => {
                     fontWeight: 700,
                   }}
                 >
-                  {user.name.charAt(0).toUpperCase()}
+                  {getUserInitial()}
                 </Avatar>
               </IconButton>
 
@@ -277,7 +277,7 @@ const Navbar = () => {
                       color: getRoleColor(),
                     }}
                   >
-                    {user.name}
+                    {user.name || 'User'}
                   </Typography>
                   <Typography 
                     variant="caption" 
@@ -286,14 +286,14 @@ const Navbar = () => {
                       fontFamily: '"Rajdhani", sans-serif',
                     }}
                   >
-                    {user.role}
+                    {user.role || 'Student'}
                   </Typography>
                   <Typography 
                     variant="caption" 
                     display="block"
                     sx={{ color: 'rgba(255, 255, 255, 0.4)' }}
                   >
-                    {user.email}
+                    {user.email || ''}
                   </Typography>
                 </Box>
 
