@@ -62,13 +62,13 @@ const RegisterPage = () => {
       icon: <Person sx={{ fontSize: 40 }} />,
       color: '#4caf50',
       description: 'View, verify, and download your certificates',
-      features: ['View certificates', 'Download PDFs', 'Verify authenticity']
+      features: ['View certificates', 'Verify authenticity']
     },
     Company: {
       icon: <Business sx={{ fontSize: 40 }} />,
       color: '#ff4081',
       description: 'Verify candidate certificates instantly',
-      features: ['Verify certificates', 'Download PDFs', 'View candidate details']
+      features: ['Verify certificates', 'View candidate details']
     }
   };
 
