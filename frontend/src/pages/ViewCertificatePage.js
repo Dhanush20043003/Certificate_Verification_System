@@ -1,11 +1,11 @@
-// frontend/src/pages/ViewCertificatePage.js - FIXED (Removed unused import & blockchain refs)
+// frontend/src/pages/ViewCertificatePage.js - WITH DOWNLOAD BUTTON
 import React, { useState } from 'react';
 import axios from 'axios';
 import {
   Container, Box, Typography, TextField, Button, Alert,
   Paper, Card, CardContent, Divider, CircularProgress, Chip
 } from '@mui/material';
-import { Verified, Search, Shield, Visibility } from '@mui/icons-material';
+import { Verified, Search, Shield, Visibility, Download } from '@mui/icons-material';
 
 const ViewCertificatePage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +16,7 @@ const ViewCertificatePage = () => {
   const [certificate, setCertificate] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,6 +38,38 @@ const ViewCertificatePage = () => {
       console.error('Fetch error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!certificate?.credentialID) {
+      alert('No certificate to download');
+      return;
+    }
+
+    setDownloading(true);
+    try {
+      const response = await axios.get(
+        `/api/certificates/download/${certificate.credentialID}`,
+        { responseType: 'blob' }
+      );
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Certificate_${certificate.fullName.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      console.log('✓ PDF Downloaded successfully');
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download PDF. Please try again.');
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -81,7 +114,7 @@ const ViewCertificatePage = () => {
               fontFamily: '"Rajdhani", sans-serif',
             }}
           >
-            View your verified certificate
+            View and download your verified certificate
           </Typography>
         </Box>
 
@@ -361,10 +394,41 @@ const ViewCertificatePage = () => {
               </CardContent>
             </Card>
 
+            {/* 🆕 DOWNLOAD BUTTON */}
+            <Button
+              fullWidth
+              variant="contained"
+              size="large"
+              startIcon={downloading ? <CircularProgress size={20} sx={{ color: '#000' }} /> : <Download />}
+              onClick={handleDownload}
+              disabled={downloading}
+              sx={{
+                mb: 3,
+                py: 1.5,
+                fontSize: '1.1rem',
+                fontFamily: '"Orbitron", sans-serif',
+                fontWeight: 700,
+                letterSpacing: '2px',
+                background: 'linear-gradient(135deg, #00ff88 0%, #00baff 100%)',
+                color: '#000',
+                boxShadow: '0 0 30px rgba(0, 255, 136, 0.5)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #33ffaa 0%, #33c9ff 100%)',
+                  boxShadow: '0 0 40px rgba(0, 255, 136, 0.7)',
+                  transform: 'translateY(-2px)',
+                },
+                '&:disabled': {
+                  background: 'rgba(0, 255, 136, 0.2)',
+                  color: 'rgba(255, 255, 255, 0.3)',
+                },
+              }}
+            >
+              {downloading ? 'DOWNLOADING PDF...' : 'DOWNLOAD CERTIFICATE (PDF)'}
+            </Button>
+
             {/* Security Note */}
             <Box
               sx={{
-                mt: 3,
                 p: 2,
                 background: 'rgba(0, 186, 255, 0.1)',
                 border: '1px solid rgba(0, 186, 255, 0.3)',

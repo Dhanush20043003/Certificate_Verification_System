@@ -1,4 +1,4 @@
-// frontend/src/pages/AdminDashboard.js - CERTIFICATE ID COLUMN (NO DOWNLOAD)
+// frontend/src/pages/AdminDashboard.js - WITH DOWNLOAD BUTTON
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -7,7 +7,7 @@ import {
   CircularProgress, IconButton, Tooltip, TextField, InputAdornment
 } from '@mui/material';
 import {
-  Verified, Search, CheckCircle, School, ContentCopy
+  Verified, Search, CheckCircle, School, Download
 } from '@mui/icons-material';
 
 const AdminDashboard = () => {
@@ -15,7 +15,6 @@ const AdminDashboard = () => {
   const [filteredCerts, setFilteredCerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [copiedId, setCopiedId] = useState('');
 
   useEffect(() => {
     fetchAllCertificates();
@@ -62,10 +61,31 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleCopyCredentialID = (credentialID) => {
-    navigator.clipboard.writeText(credentialID);
-    setCopiedId(credentialID);
-    setTimeout(() => setCopiedId(''), 2000);
+  // 🆕 DOWNLOAD PDF FUNCTION
+  const handleDownloadPDF = async (credentialID, fullName) => {
+    try {
+      console.log('Downloading PDF for:', credentialID);
+      
+      const response = await axios.get(
+        `/api/certificates/download/${credentialID}`,
+        { responseType: 'blob' }
+      );
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Certificate_${fullName.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      console.log('✓ PDF Downloaded:', credentialID);
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download PDF. Please try again.');
+    }
   };
 
   const stats = {
@@ -120,11 +140,6 @@ const AdminDashboard = () => {
             InputProps={{ 
               startAdornment: (<InputAdornment position="start"><Search sx={{ color: '#00baff' }} /></InputAdornment>) 
             }}
-            sx={{
-              '& .MuiInputLabel-root': {
-                fontFamily: '"Orbitron", sans-serif',
-              },
-            }}
           />
         </Paper>
 
@@ -146,9 +161,6 @@ const AdminDashboard = () => {
               <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.6)' }}>
                 {certificates.length === 0 ? 'No certificates registered yet' : 'No results found'}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.4)', mt: 1 }}>
-                {certificates.length === 0 ? 'Students can register at /student-register' : 'Try different search terms'}
-              </Typography>
             </Box>
           ) : (
             <TableContainer sx={{ maxHeight: 600 }}>
@@ -159,10 +171,9 @@ const AdminDashboard = () => {
                     <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>Email</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>Admission No.</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>Course</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>College</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>Issue Date</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>Certificate ID</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontFamily: '"Orbitron", sans-serif', background: 'rgba(0, 20, 40, 0.9)', color: '#00baff', borderBottom: '2px solid rgba(0, 186, 255, 0.3)' }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -186,9 +197,6 @@ const AdminDashboard = () => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2">{cert.collegeName}</Typography>
-                      </TableCell>
-                      <TableCell>
                         <Typography variant="body2">
                           {new Date(cert.issueDate).toLocaleDateString()}
                         </Typography>
@@ -208,37 +216,23 @@ const AdminDashboard = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Typography 
-                            variant="caption" 
+                        {/* 🆕 DOWNLOAD BUTTON */}
+                        <Tooltip title="Download Certificate PDF">
+                          <IconButton 
+                            size="small" 
+                            onClick={() => handleDownloadPDF(cert.credentialID, cert.fullName)}
                             sx={{ 
-                              fontFamily: 'monospace', 
                               color: '#00baff',
-                              maxWidth: '150px',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
+                              '&:hover': { 
+                                background: 'rgba(0, 186, 255, 0.1)',
+                                transform: 'scale(1.15)',
+                              },
+                              transition: 'all 0.3s ease',
                             }}
                           >
-                            {cert.credentialID}
-                          </Typography>
-                          <Tooltip title={copiedId === cert.credentialID ? "Copied!" : "Copy Certificate ID"}>
-                            <IconButton 
-                              size="small" 
-                              onClick={() => handleCopyCredentialID(cert.credentialID)}
-                              sx={{ 
-                                color: copiedId === cert.credentialID ? '#00ff88' : '#00baff',
-                                '&:hover': { 
-                                  background: 'rgba(0, 186, 255, 0.1)',
-                                  transform: 'scale(1.1)',
-                                },
-                                transition: 'all 0.3s ease',
-                              }}
-                            >
-                              <ContentCopy fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
+                            <Download />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
