@@ -1,10 +1,10 @@
-// frontend/src/App.js - UPDATED ROUTES
+// frontend/src/App.js - REDIRECT TO LOGIN BY DEFAULT
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import StudentRegisterPage from './pages/StudentRegisterPage';
-import ViewCertificatePage from './pages/ViewCertificatePage'; // RENAMED
+import ViewCertificatePage from './pages/ViewCertificatePage';
 import AdminDashboard from './pages/AdminDashboard';
 import CompanyDashboard from './pages/CompanyDashboard';
 import VerifyPage from './pages/VerifyPage';
@@ -17,16 +17,21 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
+        {/* 🔹 DEFAULT ROUTE - REDIRECT TO LOGIN */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* Public Routes */}
-        <Route path="/verify" element={<VerifyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        
-        {/* Student Routes - Public (No login needed) */}
-        <Route path="/student-register" element={<StudentRegisterPage />} />
-        <Route path="/view-certificate" element={<ViewCertificatePage />} /> {/* RENAMED */}
+        <Route path="/verify" element={<VerifyPage />} />
 
-        {/* Admin Dashboard - Protected (Login required) */}
+        {/* 🔹 STUDENT REGISTER - PUBLIC (No login needed) */}
+        <Route path="/student-register" element={<StudentRegisterPage />} />
+        
+        {/* 🔹 VIEW CERTIFICATE - PUBLIC (No login needed) */}
+        <Route path="/view-certificate" element={<ViewCertificatePage />} />
+
+        {/* 🔹 ADMIN DASHBOARD - Protected (University only) */}
         <Route
           path="/admin-dashboard"
           element={
@@ -36,7 +41,7 @@ function App() {
           }
         />
 
-        {/* Company Dashboard - Protected (Login required) */}
+        {/* 🔹 COMPANY DASHBOARD - Protected (Company only) */}
         <Route
           path="/company-dashboard"
           element={
@@ -45,9 +50,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
-        {/* Default route - redirect to student register */}
-        <Route path="/" element={<Navigate to="/student-register" />} />
+
+        {/* 🔹 FALLBACK - Redirect to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

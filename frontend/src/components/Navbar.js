@@ -1,11 +1,11 @@
-// frontend/src/components/Navbar.js - FIXED (Safe user name access)
+// frontend/src/components/Navbar.js - ROLE-BASED ACCESS CONTROL
 import React, { useContext } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, Box, IconButton,
   Menu, MenuItem, Avatar, Divider, ListItemIcon
 } from '@mui/material';
 import {
-  Verified, Dashboard, Logout, HowToReg, Visibility, RocketLaunch
+  Verified, Dashboard, Logout, Visibility, RocketLaunch
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
@@ -16,7 +16,7 @@ const Navbar = () => {
   const location = useLocation();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  // Hide navigation buttons on login/register pages
+  // Hide navbar completely on login/register pages
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   const handleMenu = (event) => {
@@ -57,11 +57,15 @@ const Navbar = () => {
     }
   };
 
-  // FIXED: Safe way to get user initial
   const getUserInitial = () => {
     if (!user || !user.name) return '?';
     return user.name.charAt(0).toUpperCase();
   };
+
+  // 🚫 DON'T SHOW NAVBAR ON AUTH PAGES
+  if (isAuthPage) {
+    return null;
+  }
 
   return (
     <AppBar 
@@ -130,96 +134,171 @@ const Navbar = () => {
           </Box>
         </Box>
 
-        {/* Navigation Links - Show only when NOT on auth pages */}
+        {/* Navigation Links - ROLE-BASED */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {!isAuthPage && (
-            <>
-              {/* Register Certificate */}
-              <Button
-                component={RouterLink}
-                to="/student-register"
-                startIcon={<HowToReg />}
-                sx={{
-                  color: 'white',
-                  fontFamily: '"Orbitron", sans-serif',
-                  fontWeight: 600,
-                  letterSpacing: '0.5px',
-                  '&:hover': { 
-                    backgroundColor: 'rgba(0, 186, 255, 0.1)',
-                    boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
-                  },
-                  display: { xs: 'none', sm: 'flex' },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                REGISTER
-              </Button>
-
-              {/* View Certificate */}
-              <Button
-                component={RouterLink}
-                to="/view-certificate"
-                startIcon={<Visibility />}
-                sx={{
-                  color: 'white',
-                  fontFamily: '"Orbitron", sans-serif',
-                  fontWeight: 600,
-                  letterSpacing: '0.5px',
-                  '&:hover': { 
-                    backgroundColor: 'rgba(0, 186, 255, 0.1)',
-                    boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
-                  },
-                  display: { xs: 'none', sm: 'flex' },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                VIEW
-              </Button>
-
-              {/* Verify */}
-              <Button
-                component={RouterLink}
-                to="/verify"
-                startIcon={<Verified />}
-                sx={{
-                  color: 'white',
-                  fontFamily: '"Orbitron", sans-serif',
-                  fontWeight: 600,
-                  letterSpacing: '0.5px',
-                  '&:hover': { 
-                    backgroundColor: 'rgba(0, 186, 255, 0.1)',
-                    boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
-                  },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                VERIFY
-              </Button>
-            </>
-          )}
-
           {user ? (
             <>
-              {/* Dashboard Button for Admin/Company */}
-              {(user.role === 'University' || user.role === 'Company') && (
-                <Button
-                  onClick={handleDashboardClick}
-                  startIcon={<Dashboard />}
-                  sx={{
-                    color: 'white',
-                    fontFamily: '"Orbitron", sans-serif',
-                    fontWeight: 600,
-                    letterSpacing: '0.5px',
-                    '&:hover': { 
-                      backgroundColor: 'rgba(0, 186, 255, 0.1)',
-                      boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
-                    },
-                    display: { xs: 'none', md: 'flex' },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  DASHBOARD
-                </Button>
+              {/* 🔹 STUDENT: VIEW + VERIFY */}
+              {user.role === 'Student' && (
+                <>
+                  <Button
+                    component={RouterLink}
+                    to="/view-certificate"
+                    startIcon={<Visibility />}
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    VIEW
+                  </Button>
+                  <Button
+                    component={RouterLink}
+                    to="/verify"
+                    startIcon={<Verified />}
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    VERIFY
+                  </Button>
+                </>
+              )}
+
+              {/* 🔹 COMPANY: VERIFY + DASHBOARD */}
+              {user.role === 'Company' && (
+                <>
+                  <Button
+                    component={RouterLink}
+                    to="/verify"
+                    startIcon={<Verified />}
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    VERIFY
+                  </Button>
+                  <Button
+                    onClick={handleDashboardClick}
+                    startIcon={<Dashboard />}
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      display: { xs: 'none', md: 'flex' },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    DASHBOARD
+                  </Button>
+                </>
+              )}
+
+              {/* 🔹 UNIVERSITY/ADMIN: FULL ACCESS */}
+              {user.role === 'University' && (
+                <>
+                  <Button
+                    component={RouterLink}
+                    to="/student-register"
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      display: { xs: 'none', sm: 'flex' },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    REGISTER
+                  </Button>
+                  <Button
+                    component={RouterLink}
+                    to="/view-certificate"
+                    startIcon={<Visibility />}
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      display: { xs: 'none', sm: 'flex' },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    VIEW
+                  </Button>
+                  <Button
+                    component={RouterLink}
+                    to="/verify"
+                    startIcon={<Verified />}
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    VERIFY
+                  </Button>
+                  <Button
+                    onClick={handleDashboardClick}
+                    startIcon={<Dashboard />}
+                    sx={{
+                      color: 'white',
+                      fontFamily: '"Orbitron", sans-serif',
+                      fontWeight: 600,
+                      letterSpacing: '0.5px',
+                      '&:hover': { 
+                        backgroundColor: 'rgba(0, 186, 255, 0.1)',
+                        boxShadow: '0 0 20px rgba(0, 186, 255, 0.3)',
+                      },
+                      display: { xs: 'none', md: 'flex' },
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    DASHBOARD
+                  </Button>
+                </>
               )}
 
               {/* User Menu */}
@@ -299,8 +378,8 @@ const Navbar = () => {
 
                 <Divider sx={{ borderColor: 'rgba(0, 186, 255, 0.2)' }} />
 
-                {/* Dashboard - Mobile */}
-                {(user.role === 'University' || user.role === 'Company') && (
+                {/* Dashboard - Mobile (Company only) */}
+                {user.role === 'Company' && (
                   <MenuItem 
                     onClick={() => { handleDashboardClick(); handleClose(); }} 
                     sx={{ 
@@ -336,29 +415,28 @@ const Navbar = () => {
               </Menu>
             </>
           ) : (
-            !isAuthPage && (
-              <Button
-                component={RouterLink}
-                to="/login"
-                variant="contained"
-                sx={{
-                  background: 'linear-gradient(135deg, #00baff 0%, #0066ff 100%)',
-                  color: '#000',
-                  fontFamily: '"Orbitron", sans-serif',
-                  fontWeight: 700,
-                  letterSpacing: '1px',
-                  boxShadow: '0 0 20px rgba(0, 186, 255, 0.5)',
-                  '&:hover': {
-                    background: 'linear-gradient(135deg, #33c9ff 0%, #3388ff 100%)',
-                    boxShadow: '0 0 30px rgba(0, 186, 255, 0.7)',
-                    transform: 'translateY(-2px)',
-                  },
-                  transition: 'all 0.3s ease',
-                }}
-              >
-                LOGIN
-              </Button>
-            )
+            // 🔹 NOT LOGGED IN: Show Login Button
+            <Button
+              component={RouterLink}
+              to="/login"
+              variant="contained"
+              sx={{
+                background: 'linear-gradient(135deg, #00baff 0%, #0066ff 100%)',
+                color: '#000',
+                fontFamily: '"Orbitron", sans-serif',
+                fontWeight: 700,
+                letterSpacing: '1px',
+                boxShadow: '0 0 20px rgba(0, 186, 255, 0.5)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #33c9ff 0%, #3388ff 100%)',
+                  boxShadow: '0 0 30px rgba(0, 186, 255, 0.7)',
+                  transform: 'translateY(-2px)',
+                },
+                transition: 'all 0.3s ease',
+              }}
+            >
+              LOGIN
+            </Button>
           )}
         </Box>
       </Toolbar>
